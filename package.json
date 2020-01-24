@@ -1,0 +1,12 @@
+{
+  "name": "demo.task-manager",
+  "private": true,
+  "version": "1.0.0",
+  "repository": "git@github.com:deryagin/demo.task-manager.git",
+  "author": "deryagin <deryagin.and@gmail.com>",
+  "license": "MIT",
+  "workspaces": [
+    "SystemCore",
+    "TaskManager"
+  ]
+}
