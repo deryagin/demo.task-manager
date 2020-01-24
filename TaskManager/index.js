@@ -1,11 +1,17 @@
 const axios = require('axios').default;
 
+const APIURI = 'https://reqbin.com/echo/post/json';
+const APITOKEN = '1fff74e532ee6e1da4c7effb8681395aa8d5a549';
 const TIMEOUT = 200;
 
-let timer = setTimeout(runner, TIMEOUT);
+const request = axios.create({
+    baseURL: APIURI,
+    timeout: 1000,
+    headers: { 'x-auth-token': APITOKEN }
+});
 
 function runner() {
-    return axios.post('https://reqbin.com/echo/post/json')
+    return request.post('/firstmethod')
         .then((response) => {
             console.log(response.status);
         })
@@ -16,3 +22,5 @@ function runner() {
             timer = setTimeout(runner, TIMEOUT);
         })
 };
+
+let timer = setTimeout(runner, TIMEOUT);
