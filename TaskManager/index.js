@@ -1,7 +1,5 @@
 const request = require('./request');
-const rules = require('./config').rules;
-
-const scedule = rules;
+const scedule = require('./scedule');
 
 function runner() {
     const methodName = '/echo/post/json';
