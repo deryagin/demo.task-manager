@@ -1,19 +1,40 @@
-const request = require('./request');
+const api = require('./api');
 const scedule = require('./scedule');
 
-function runner() {
-    const methodName = '/echo/post/json';
+const runner = () => {
+    const method = scedule.nextMethod();
+    if (!method) {
+        return null;
+    }
 
-    return request.post(methodName)
-        .then((response) => {
-            console.log(response.status);
-        })
-        .catch((error) => {
-            console.error(error.response ? error.response.status : error.code);
-        })
+    const dateStart = new Date().toISOString();
+    return api.runMethod(method.methodName)
         .then(() => {
-            process.nextTick(runner);
+            const methodLog = {
+                ...method,
+                dateStart,
+                dateEnd: new Date().toISOString(),
+                result: 'OK',
+            };
+            api.logLastRun(methodLog);
+            const method = scedule.planNextRun(methodLog);
+            scedule.modifyScedule(method);
         })
+        .catch(error => {
+            const methodLog = {
+                ...method,
+                dateStart,
+                dateEnd: new Date().toISOString(),
+                result: 'Error',
+                errorDescription: error.message || error.code,
+            };
+            api.logLastRun(methodLog);
+            const method = scedule.planInHour(methodLog)
+            scedule.modifyScedule(method);
+        })
+        .then(() => setTimeout(runner, 100));
 };
 
-process.nextTick(runner);
+process.on('uncaughtException', console.error);
+scedule.makeScedule().then(runner);
+// process.nextTick(runner);
